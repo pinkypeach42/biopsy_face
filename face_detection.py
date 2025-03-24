@@ -21,23 +21,26 @@ output = "output_image"
 
 # --------------- Format Aligning: 
 # .heic and .heif are not accepted by OpenCV, thats why check - and transform to .jpg
-for i in range (len(pictures)):
-    if pictures[i].lower().endswith((".heic", ".heif")):
+for pic in pictures:
+    if pic.lower().endswith((".heic", ".heif")):
      
-     full_path = os.path.join("image", pictures[i])
+     full_path = os.path.join("image", pic)
      heif_pic= pillow_heif.open_heif(full_path)
 
      image = Image.frombytes(heif_pic.mode, heif_pic.size, heif_pic.data)
      image_cv = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
 
      # save the .heic as .png, delete the old one 
-     new_name = os.path.splitext(pictures[i])[0] + ".jpg"
+     new_name = os.path.splitext(pic)[0] + ".jpg"
      new_path = os.path.join("image", new_name)
      cv2.imwrite(new_path, image_cv)
      os.remove(full_path)
 
+pictures = os.listdir("image")
+print(f"Pics: {pictures}")
 
-     '''face = face_recognition.face_locations(image_cv, model="cnn")
+
+'''face = face_recognition.face_locations(image_cv, model="cnn")
      print(f"Gesichtserkennung abgeschlossen. {len(face)} Gesichter gefunden.")
 
      if not face:
@@ -69,10 +72,4 @@ for i in range (len(pictures)):
       '''
    
 
-    else:
-       continue
-      #sys.exit(0) 
 
-
-pictures = os.listdir("image")
-print(f"Pics: {pictures}")
