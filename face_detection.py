@@ -46,6 +46,7 @@ pictures = os.listdir("input")
 print(f"Pics: {pictures}")
 
 
+
 # ----------- DOWNSAMPLING THE PICTURES
 # separate loop just for debugging reasons
 print("Downsampling phase...")
@@ -64,7 +65,6 @@ for pic in pictures:
         new_image = cv2.resize(image, (new_w, new_h), interpolation=cv2.INTER_LINEAR)
         cv2.imwrite(full_path, new_image)
 print("Downsampling abgeschlossen!")
-   
 
 
 # -------------- Face Recognition
