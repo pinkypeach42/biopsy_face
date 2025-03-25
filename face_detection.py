@@ -13,9 +13,11 @@ print("Benutzte Python-Version:", sys.version)
 print("Python-Pfad:", sys.executable)
 
 
+global_start_time = time.time()
+
 # --------------- read images from input folder + define the output folder
 pictures = os.listdir("input")
-print(f"Pics: {pictures}")
+#print(f"Pics: {pictures}")
 
 output_folder = "output"
 
@@ -36,9 +38,33 @@ for pic in pictures:
      new_path = os.path.join("input", new_name)
      cv2.imwrite(new_path, image_cv)
      os.remove(full_path)
+    elif pic.lower().endswith(".ds_store"): # ignore git .ds_store
+       os.remove(os.path.join("input", pic))
+
 
 pictures = os.listdir("input")
 print(f"Pics: {pictures}")
+
+
+# ----------- DOWNSAMPLING THE PICTURES
+# separate loop just for debugging reasons
+print("Downsampling phase...")
+for pic in pictures:
+     print(f"pic {pic} start")  
+    
+     full_path = os.path.join("input", pic)
+     image = cv2.imread(full_path)
+     h, w = image.shape [:2]
+     #print( h,w)
+
+     if min(h,w) > 1000:
+        #print(f"Downsampling the image {pic}")
+        downsample_factor = 1000/min(h,w)
+        new_h, new_w = int(h*downsample_factor), int(w*downsample_factor)
+        new_image = cv2.resize(image, (new_w, new_h), interpolation=cv2.INTER_LINEAR)
+        cv2.imwrite(full_path, new_image)
+print("Downsampling abgeschlossen!")
+   
 
 
 # -------------- Face Recognition
@@ -51,14 +77,14 @@ for i, pic in enumerate(pictures):
      
      start = time.time()
      face = face_recognition.face_locations(image, model="cnn")
-     print(f"Gesichtserkennung abgeschlossen. {len(face)} Gesichter gefunden.")
+     #print(f"Gesichtserkennung abgeschlossen. {len(face)} Gesichter gefunden.")
 
      # HIER AM BESTEN IN DEBUG FILE SCHREIBEN!!!!!!!!!!!!!!
      if not face:
         print(f"Picture {pic} muss manuell verarbeitet werden!")
 
-     ende = time.time()
-     print(f"Gesichtserkennng Time: {ende - start:.4f} seconds")
+     #ende = time.time()
+     #print(f"Gesichtserkennng Time: {ende - start:.4f} seconds")
      
      start = time.time()
      
@@ -78,11 +104,13 @@ for i, pic in enumerate(pictures):
       face_resized = cv2.resize(face, (400, 400), interpolation=cv2.INTER_LINEAR)
 
       cv2.imwrite(os.path.join(output_folder, pic), face_resized)
-      print(f"Gesicht {i} gespeichert mit vergrößertem Bereich.")
+      #print(f"Gesicht {i} gespeichert mit vergrößertem Bereich.")
 
       ende = time.time()
-      print(f"Ausschneiden Time: {ende - start:.4f} seconds")
+      #print(f"Ausschneiden Time: {ende - start:.4f} seconds")
       
    
 
 
+global_end_time = time.time()
+print(f"GlobalTime: {global_end_time - global_start_time} seconds")
