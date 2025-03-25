@@ -20,7 +20,7 @@ def main():
 
     # ARRAY with all Data (folders, pictures), NOT A PATH ANYMORE!
     folder_content = os.listdir(participant_folder) 
-    print (folder_content)
+    #print (folder_content)
 
 # PROCESSING OF SEPARATE FOLDERS (mom, dad etc.) in Participant Folder
     for item in folder_content:
@@ -32,12 +32,13 @@ def main():
          pictures_of_person = os.listdir(full_path)
 
          start = time.time()   
+         
         # Apple has .heic .heif format that cannot be proccessed with cv
         # this funktion translates every .heic (if there are any) into .jpg
          align_format (pictures_of_person, full_path) 
          pictures_of_person = os.listdir(full_path)
 
-         print(f'Downsampling Folder "{item}" ...')
+         print(f'Processing Folder "{item}" ...')
          downsample(pictures_of_person, full_path)
          recognize_face (pictures_of_person, participant_folder, item)
          ende = time.time() 
