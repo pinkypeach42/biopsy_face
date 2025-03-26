@@ -3,9 +3,7 @@ import pillow_heif
 import cv2
 import numpy as np
 import face_recognition
-import time
 
-import sys
 import os
 
 
@@ -34,9 +32,6 @@ def align_format (folder_content, full_path):
 
 
 def downsample(folder_content, full_path):
-
-    # ----------- DOWNSAMPLING THE PICTURES
-    # separate loop just for debugging reasons
    
     for pic in folder_content:
         #print(f"pic {pic} start")  
@@ -72,43 +67,56 @@ def recognize_face (folder_content, participant_folder, item):
         image = cv2.imread(full_path)
         
         face = face_recognition.face_locations(image, model="cnn")
+
+       
+  
+
         #print(f"Gesichtserkennung abgeschlossen. {len(face)} Gesichter gefunden.")
 
-        # HIER AM BESTEN IN DEBUG FILE SCHREIBEN!!!!!!!!!!!!!!
-        if not face:
-            print(f"Picture {pic} muss manuell verarbeitet werden!")
+        # for debugging
+        debug_path = os.path.join(participant_folder, "debug.txt")
+        num_faces = len(face)
         
+        if num_faces == 1:
+            # Jedes erkannte Gesicht ausschneiden und skalieren
+            for (top, right, bottom, left) in face:
+                h, w, _ = image.shape
+                
+                # 30% padding
+                padding = int((bottom - top) * 0.3)  
+
+                top = max(0, top - padding)
+                bottom = min(h, bottom + padding)
+                left = max(0, left - padding)
+                right = min(w, right + padding)
+
+                face = image[top:bottom, left:right]
+                face_resized = cv2.resize(face, (400, 400), interpolation=cv2.INTER_LINEAR)
+                #print (os.path.join(output_folder, pic))
+                new_name = f"{item}_{i}.jpg"
+                cv2.imwrite(os.path.join(output_folder, new_name), face_resized)
         
-        # Jedes erkannte Gesicht ausschneiden und skalieren
-        for (top, right, bottom, left) in face:
-            h, w, _ = image.shape
+ # ----------   DEBUGGEN
+        
+        else:
+          message = ""
+          if num_faces == 0:
+             message = f"No face in picture {pic}! Please process it manually!"
+             debug_line = f"{pic}: no face\n"
+          else:
+             message = f"Picture {pic} has more than 1 face! Please process it manually!"
+             debug_line = f"{pic}: more than 1 face detected\n"
             
-            # Abstand um 20% vergrößern
-            padding = int((bottom - top) * 0.3)  
+          print(message)
+          with open(debug_path, "a") as file:
+             file.write(debug_line) 
 
-            top = max(0, top - padding)
-            bottom = min(h, bottom + padding)
-            left = max(0, left - padding)
-            right = min(w, right + padding)
-
-            face = image[top:bottom, left:right]
-            face_resized = cv2.resize(face, (400, 400), interpolation=cv2.INTER_LINEAR)
-            #print (os.path.join(output_folder, pic))
-            new_name = f"{item}_{i}.jpg"
-            cv2.imwrite(os.path.join(output_folder, new_name), face_resized)
-        
-
-        
-    
-
-
-
+  
+ 
 
 def main():
-    print("la-la-la")
+    print("ha-ha-ha its the wrong starting point, run main.py")
 
 
-    
-   
 if __name__ == "__main__":
     main()

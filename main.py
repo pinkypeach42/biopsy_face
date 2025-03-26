@@ -14,7 +14,7 @@ def main():
     root = tk.Tk()
     root.withdraw()
 
-    participant_folder = filedialog.askdirectory(title="Wähle ein Probanden-Verzeichnis aus")
+    participant_folder = filedialog.askdirectory(title="Please choose the participant Folder")
 
     print("Chosen folder:", participant_folder)
 
@@ -32,7 +32,7 @@ def main():
          pictures_of_person = os.listdir(full_path)
 
          start = time.time()   
-         
+
         # Apple has .heic .heif format that cannot be proccessed with cv
         # this funktion translates every .heic (if there are any) into .jpg
          align_format (pictures_of_person, full_path) 
@@ -42,7 +42,7 @@ def main():
          downsample(pictures_of_person, full_path)
          recognize_face (pictures_of_person, participant_folder, item)
          ende = time.time() 
-         print (f"Processing {ende - start} seconds")
+         #print (f"Processing {ende - start} seconds")
 
 
         #print(images) #test the content of the folder
