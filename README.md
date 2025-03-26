@@ -1,6 +1,5 @@
 # 🧠 Biopsy Face Recognition 🧠 
 
-A simple face recognition tool to extract and process faces from images.  
 Tested on **Python 3.12** under macOS Sequoia
 
 ---
