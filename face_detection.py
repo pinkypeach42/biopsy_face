@@ -83,12 +83,23 @@ def recognize_face (folder_content, participant_folder, item):
                 h, w, _ = image.shape
                 
                 # 30% padding
-                padding = int((bottom - top) * 0.3)  
+                padding = int((bottom - top) * 0.4)  
 
+                # to still stay inside of the picture
                 top = max(0, top - padding)
                 bottom = min(h, bottom + padding)
                 left = max(0, left - padding)
                 right = min(w, right + padding)
+
+
+                height_face = bottom - top 
+                width_face = right - left
+
+                if (height_face > width_face):
+                   diff = height_face - width_face
+                   bottom -= int(diff*0.4)
+                   top += int(diff*0.6)
+
 
                 face = image[top:bottom, left:right]
                 face_resized = cv2.resize(face, (400, 400), interpolation=cv2.INTER_LINEAR)
