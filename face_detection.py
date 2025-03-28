@@ -77,9 +77,17 @@ def recognize_face (folder_content, participant_folder, item):
         debug_path = os.path.join(participant_folder, "debug.txt")
         num_faces = len(face)
         
-        if num_faces == 1:
-            # Jedes erkannte Gesicht ausschneiden und skalieren
-            for (top, right, bottom, left) in face:
+        message = ""
+        if num_faces == 0:
+             message = f"No face in picture {pic}! Please process it manually!"
+             debug_line = f"{pic}: no face\n"
+
+             print(message)
+             with open(debug_path, "a") as file:
+              file.write(debug_line) 
+        else:
+            # for every face in image
+            for face_i, (top, right, bottom, left) in enumerate(face):
                 h, w, _ = image.shape
                 
                 # 30% padding
@@ -104,26 +112,9 @@ def recognize_face (folder_content, participant_folder, item):
                 face = image[top:bottom, left:right]
                 face_resized = cv2.resize(face, (400, 400), interpolation=cv2.INTER_LINEAR)
                 #print (os.path.join(output_folder, pic))
-                new_name = f"{item}_{i}.jpg"
+                new_name = f"{item}_{i}_{face_i}.jpg"
                 cv2.imwrite(os.path.join(output_folder, new_name), face_resized)
         
- # ----------   DEBUGGEN
-        
-        else:
-          message = ""
-          if num_faces == 0:
-             message = f"No face in picture {pic}! Please process it manually!"
-             debug_line = f"{pic}: no face\n"
-          else:
-             message = f"Picture {pic} has more than 1 face! Please process it manually!"
-             debug_line = f"{pic}: more than 1 face detected\n"
-            
-          print(message)
-          with open(debug_path, "a") as file:
-             file.write(debug_line) 
-
-  
- 
 
 def main():
     print("ha-ha-ha its the wrong starting point, run main.py")
