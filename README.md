@@ -69,7 +69,7 @@ pip install -r requirements.txt
 
 When running the main.py please choose in poping-up-window the Participant Folder!
 
-## Step 4: Rename the pictures (rename.py)
+## Step 4: if you want to rename the pictures (rename.py)
 
 Imagine having Participant Folder "ParticipantName" with following structure:
 ```bash
@@ -106,6 +106,8 @@ ParticipantName
 ```
 
 Then the same question will be asked for other folders (e.g. Johnatan). 
+
+If you want to rename the pictures just in one folder, you can choose it from the beginning
 
 ---
 
