@@ -3,8 +3,16 @@ import pillow_heif
 import cv2
 import numpy as np
 import face_recognition
+import rawpy
+import imageio
 
 import os
+
+
+def convert_cr2_to_jpg(path_pic, new_path):
+    with rawpy.imread(path_pic) as raw:
+        rgb = raw.postprocess()
+    imageio.imsave(new_path, rgb)
 
 
 # --------------- Format Aligning: 
@@ -27,6 +35,17 @@ def align_format (folder_content, full_path):
      new_path = os.path.join(full_path, new_name)
      cv2.imwrite(new_path, image_cv)
      os.remove(path_pic)
+    elif pic.lower().endswith((".cr2")): 
+        path_pic = os.path.join(full_path, pic)
+        new_name = os.path.splitext(pic)[0] + ".jpg"
+        new_path = os.path.join(full_path, new_name)
+        try:
+         convert_cr2_to_jpg(path_pic, new_path)
+         os.remove(path_pic)  # Optional: Original löschen
+         print(f"CR2 konvertiert: {pic}")
+        except Exception as e:
+         print(f"Fehler beim Konvertieren von {pic}: {e}")
+       
     elif pic.lower().endswith(".ds_store"): # ignore git .ds_store
        os.remove(os.path.join(full_path, pic))
 
@@ -65,6 +84,9 @@ def recognize_face (folder_content, participant_folder, item):
         full_path = os.path.join(participant_folder,item, pic)
        
         image = cv2.imread(full_path)
+
+        if image is None:
+           print(f"Smth wrong with {image}")
         
         face = face_recognition.face_locations(image, model="cnn")
 
@@ -86,7 +108,7 @@ def recognize_face (folder_content, participant_folder, item):
              with open(debug_path, "a") as file:
               file.write(debug_line) 
         else:
-            # for every face in image
+            # Jedes erkannte Gesicht ausschneiden und skalieren
             for face_i, (top, right, bottom, left) in enumerate(face):
                 h, w, _ = image.shape
                 
