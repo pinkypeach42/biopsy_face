@@ -108,7 +108,7 @@ def recognize_face (folder_content, participant_folder, item):
              with open(debug_path, "a") as file:
               file.write(debug_line) 
         else:
-            # Jedes erkannte Gesicht ausschneiden und skalieren
+          
             for face_i, (top, right, bottom, left) in enumerate(face):
                 h, w, _ = image.shape
                 
@@ -125,11 +125,16 @@ def recognize_face (folder_content, participant_folder, item):
                 height_face = bottom - top 
                 width_face = right - left
 
+                #print(f'Heigth {height_face} and width {width_face}')
                 if (height_face > width_face):
                    diff = height_face - width_face
                    bottom -= int(diff*0.4)
                    top += int(diff*0.6)
-
+                elif (width_face > height_face):
+                   diff = width_face - height_face
+                   left += int(diff*0.5)   
+                   right -= int(diff*0.5)
+      
 
                 face = image[top:bottom, left:right]
                 face_resized = cv2.resize(face, (400, 400), interpolation=cv2.INTER_LINEAR)
